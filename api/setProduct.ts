@@ -24,7 +24,7 @@ export default async (request: VercelRequest, response: VercelResponse) => {
     };
     results.push(temp);
   });
-
+  console.log(results);
   const db = admin.firestore();
   try {
     for (let i = 0; i < results.length; i++) {

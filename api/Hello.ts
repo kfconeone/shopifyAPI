@@ -14,6 +14,7 @@ admin.initializeApp({
 export default async (request: VercelRequest, response: VercelResponse) => {
   const db = admin.firestore();
   try {
+    console.log(request.body);
     for (let i = 0; i < 3; i++) {
       await db
         .collection("products")
