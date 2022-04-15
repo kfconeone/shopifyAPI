@@ -17,7 +17,7 @@ export default (request: VercelRequest, response: VercelResponse) => {
 
   product.variants.forEach((variant: any) => {
     let temp = {
-      vid: variant.vid,
+      vid: variant.id,
       sku: variant.sku,
       price: variant.price,
       handle: product.handle,
