@@ -11,7 +11,7 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
 
-export default (request: VercelRequest, response: VercelResponse) => {
+export default async (request: VercelRequest, response: VercelResponse) => {
   let product = request.body;
   let results: any = [];
 
@@ -28,9 +28,10 @@ export default (request: VercelRequest, response: VercelResponse) => {
   console.log(results);
   const db = admin.firestore();
 
-  results.forEach((result: any) => {
+  results.forEach(async (result: any) => {
     // console.log(result.vid.replace(/\//g, "").replace(":", ""));
-    db.collection("products")
+    await db
+      .collection("products")
       .doc(result.vid.replace(/\//g, "").replace(":", ""))
       .set(result);
   });
