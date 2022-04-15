@@ -14,8 +14,8 @@ const serviceAccount = {
 };
 
 export default (request: VercelRequest, response: VercelResponse) => {
-  console.log("body--:", request.body);
-  // console.log("body--:", JSON.parse(request.body));
+  // console.log("body--:", request.body);
+  console.log("body--:", JSON.parse(request.body));
 
   // product.variants.forEach((variant: any) => {
   //   console.log(variant.price);
