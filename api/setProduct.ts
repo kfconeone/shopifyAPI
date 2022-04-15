@@ -24,5 +24,5 @@ export default (request: VercelRequest, response: VercelResponse) => {
   //   console.log(product.handle);
   // });
 
-  response.status(200);
+  response.status(200).send("Hello World!");
 };
