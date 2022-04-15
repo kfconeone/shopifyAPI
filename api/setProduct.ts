@@ -29,10 +29,10 @@ export default (request: VercelRequest, response: VercelResponse) => {
   const db = admin.firestore();
 
   results.forEach((result: any) => {
-    console.log(result.vid.replace(/\//g, "").replace(":", ""));
-    // db.collection("products")
-    //   .doc(result.vid.replace(/\//g, "").replace(":", ""))
-    //   .set(result);
+    // console.log(result.vid.replace(/\//g, "").replace(":", ""));
+    db.collection("products")
+      .doc(result.vid.replace(/\//g, "").replace(":", ""))
+      .set(result);
   });
 
   response.status(200).send("Hello World!");
