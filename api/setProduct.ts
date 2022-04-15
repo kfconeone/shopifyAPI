@@ -25,20 +25,18 @@ export default async (request: VercelRequest, response: VercelResponse) => {
     results.push(temp);
   });
 
-  console.log(results);
   const db = admin.firestore();
-
-  results.forEach(async (result: any) => {
-    // console.log(result.vid.replace(/\//g, "").replace(":", ""));
-    try {
+  try {
+    for (let i = 0; i < results.length; i++) {
+      // console.log(result.vid.replace(/\//g, "").replace(":", ""));
       await db
         .collection("products")
-        .doc(result.vid.replace(/\//g, "").replace(":", ""))
-        .set(result);
-    } catch (e) {
-      console.log(e);
+        .doc(results[i].vid.replace(/\//g, "").replace(":", ""))
+        .set(results[i]);
     }
-  });
+  } catch (e) {
+    console.log(e);
+  }
 
   response.status(200).send("Hello World!");
 };

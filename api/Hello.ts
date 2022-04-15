@@ -13,11 +13,16 @@ admin.initializeApp({
 
 export default async (request: VercelRequest, response: VercelResponse) => {
   const db = admin.firestore();
-  const product = await db
-    .collection("products")
-    .doc("gidshopifyProductVariant40048940384298")
-    .get();
-  console.log(product.data());
+  try {
+    for (let i = 0; i < 3; i++) {
+      await db
+        .collection("products")
+        .doc("gg" + i)
+        .set({ name: "gg" + i });
+    }
+  } catch (e) {
+    console.log(e);
+  }
 
   response.status(200).send("Hello World!");
 };
