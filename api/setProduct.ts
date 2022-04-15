@@ -30,10 +30,14 @@ export default async (request: VercelRequest, response: VercelResponse) => {
 
   results.forEach(async (result: any) => {
     // console.log(result.vid.replace(/\//g, "").replace(":", ""));
-    await db
-      .collection("products")
-      .doc(result.vid.replace(/\//g, "").replace(":", ""))
-      .set(result);
+    try {
+      await db
+        .collection("products")
+        .doc(result.vid.replace(/\//g, "").replace(":", ""))
+        .set(result);
+    } catch (e) {
+      console.log(e);
+    }
   });
 
   response.status(200).send("Hello World!");
