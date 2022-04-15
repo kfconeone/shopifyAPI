@@ -29,7 +29,7 @@ export default (request: VercelRequest, response: VercelResponse) => {
   const db = admin.firestore();
 
   results.forEach((result: any) => {
-    console.log(result);
+    console.log(result.vid);
     db.collection("products")
       .doc(result.vid.replaceAll("/", "").replaceAll(":", ""))
       .set(result);
