@@ -25,11 +25,11 @@ export default (request: VercelRequest, response: VercelResponse) => {
     results.push(temp);
   });
 
-  // console.log(results);
+  console.log(results);
   const db = admin.firestore();
 
   results.forEach((result: any) => {
-    // console.log(result);
+    console.log(result);
     db.collection("products")
       .doc(result.vid.replaceAll("/", "").replaceAll(":", ""))
       .set(result);
