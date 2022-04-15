@@ -24,13 +24,15 @@ export default (request: VercelRequest, response: VercelResponse) => {
     };
     results.push(temp);
   });
-  const db = admin.firestore();
 
-  results.forEach((result: any) => {
-    db.collection("products")
-      .doc(result.vid.replaceAll("/", "").replaceAll(":", ""))
-      .set(result);
-  });
+  console.log(results);
+  // const db = admin.firestore();
+
+  // results.forEach((result: any) => {
+  //   db.collection("products")
+  //     .doc(result.vid.replaceAll("/", "").replaceAll(":", ""))
+  //     .set(result);
+  // });
 
   response.status(200).send("Hello World!");
 };
