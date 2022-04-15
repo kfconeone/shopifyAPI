@@ -11,7 +11,7 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
 
-export default (request: VercelRequest, response: VercelResponse) => {
+export default async (request: VercelRequest, response: VercelResponse) => {
   let product = request.body;
   let results: any = [];
 
@@ -24,16 +24,19 @@ export default (request: VercelRequest, response: VercelResponse) => {
     };
     results.push(temp);
   });
-
   console.log(results);
   const db = admin.firestore();
-
-  results.forEach((result: any) => {
-    // console.log(result.vid.replace(/\//g, "").replace(":", ""));
-    db.collection("products")
-      .doc(result.vid.replace(/\//g, "").replace(":", ""))
-      .set(result);
-  });
+  try {
+    for (let i = 0; i < results.length; i++) {
+      // console.log(result.vid.replace(/\//g, "").replace(":", ""));
+      await db
+        .collection("products")
+        .doc(results[i].vid.replace(/\//g, "").replace(":", ""))
+        .set(results[i]);
+    }
+  } catch (e) {
+    console.log(e);
+  }
 
   response.status(200).send("Hello World!");
 };
