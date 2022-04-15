@@ -1,28 +1,32 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
+import admin = require("firebase-admin");
 
-const serviceAccount = {
-  type: process.env.type,
-  project_id: process.env.project_id,
-  private_key_id: process.env.private_key_id,
-  private_key: process.env.private_key,
-  client_email: process.env.client_email,
-  client_id: process.env.client_id,
-  auth_uri: process.env.auth_uri,
-  token_uri: process.env.token_uri,
-  auth_provider_x509_cert_url: process.env.auth_provider_x509_cert_url,
-  client_x509_cert_url: process.env.client_x509_cert_url,
+const serviceAccount: admin.ServiceAccount = {
+  projectId: process.env.project_id,
+  clientEmail: process.env.client_email,
+  privateKey: process.env.private_key,
 };
 
-export default (request: VercelRequest, response: VercelResponse) => {
-  console.log("body--:", request.body.variants);
-  // console.log("body--:", JSON.parse(request.body));
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+});
 
-  // product.variants.forEach((variant: any) => {
-  //   console.log(variant.price);
-  //   console.log(variant.sku);
-  //   console.log(variant.id);
-  //   console.log(product.handle);
-  // });
+export default (request: VercelRequest, response: VercelResponse) => {
+  let product = request.body;
+  let results: any = [];
+
+  product.variants.forEach((variant: any) => {
+    let temp = {
+      vid: variant.vid,
+      sku: variant.sku,
+      price: variant.price,
+      handle: product.handle,
+    };
+    results.push(temp);
+  });
+  console.log(results);
+  // const db = admin.firestore();
+  // db.collection("products").set()
 
   response.status(200).send("Hello World!");
 };
