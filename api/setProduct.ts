@@ -28,11 +28,12 @@ export default (request: VercelRequest, response: VercelResponse) => {
   console.log(results);
   // const db = admin.firestore();
 
-  // results.forEach((result: any) => {
-  //   db.collection("products")
-  //     .doc(result.vid.replaceAll("/", "").replaceAll(":", ""))
-  //     .set(result);
-  // });
+  results.forEach((result: any) => {
+    console.log(result);
+    // db.collection("products")
+    //   .doc(result.vid.replaceAll("/", "").replaceAll(":", ""))
+    //   .set(result);
+  });
 
   response.status(200).send("Hello World!");
 };
