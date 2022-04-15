@@ -13,9 +13,9 @@ const serviceAccount = {
   client_x509_cert_url: process.env.client_x509_cert_url,
 };
 
-export default async (request: VercelRequest, response: VercelResponse) => {
+export default (request: VercelRequest, response: VercelResponse) => {
   console.log("body--:", request.body);
-  console.log("body--:", JSON.parse(request.body));
+  // console.log("body--:", JSON.parse(request.body));
 
   // product.variants.forEach((variant: any) => {
   //   console.log(variant.price);
