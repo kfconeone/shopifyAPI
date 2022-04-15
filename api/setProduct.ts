@@ -14,15 +14,15 @@ const serviceAccount = {
 };
 
 export default async (request: VercelRequest, response: VercelResponse) => {
-  // console.log("body:", request.body);
-  let product = JSON.parse(request.body);
+  console.log("body--:", request.body);
+  console.log("body--:", JSON.parse(request.body));
 
-  product.variants.forEach((variant: any) => {
-    console.log(variant.price);
-    console.log(variant.sku);
-    console.log(variant.id);
-    console.log(product.handle);
-  });
+  // product.variants.forEach((variant: any) => {
+  //   console.log(variant.price);
+  //   console.log(variant.sku);
+  //   console.log(variant.id);
+  //   console.log(product.handle);
+  // });
 
   response.status(200);
 };
