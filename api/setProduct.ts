@@ -17,7 +17,7 @@ export default (request: VercelRequest, response: VercelResponse) => {
 
   product.variants.forEach((variant: any) => {
     let temp = {
-      vid: variant.id,
+      vid: "gid://shopify/ProductVariant/" + variant.id.toString(),
       sku: variant.sku,
       price: variant.price,
       handle: product.handle,
@@ -25,14 +25,14 @@ export default (request: VercelRequest, response: VercelResponse) => {
     results.push(temp);
   });
 
-  console.log(results);
-  // const db = admin.firestore();
+  // console.log(results);
+  const db = admin.firestore();
 
   results.forEach((result: any) => {
-    console.log(result);
-    // db.collection("products")
-    //   .doc(result.vid.replaceAll("/", "").replaceAll(":", ""))
-    //   .set(result);
+    // console.log(result);
+    db.collection("products")
+      .doc(result.vid.replaceAll("/", "").replaceAll(":", ""))
+      .set(result);
   });
 
   response.status(200).send("Hello World!");
