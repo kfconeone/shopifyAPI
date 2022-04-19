@@ -111,7 +111,7 @@ async function setOrders() {
 
     for (let i = 0; i < ordersArr.length; i++) {
       if (ordersArr[i]) {
-        let tempId = ordersArr[i].id.replaceAll("/", "").replaceAll(":", "");
+        let tempId = ordersArr[i].id.replace(/\:/g, "").replace(/\//g, "");
         await db.collection("orders").doc(tempId).set(ordersArr[i]);
       }
     }
