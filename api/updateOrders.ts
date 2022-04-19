@@ -23,6 +23,7 @@ admin.initializeApp({
 export default async (request: VercelRequest, response: VercelResponse) => {
   try {
     console.log(request.body);
+    await setOrders();
   } catch (e) {
     console.log(e);
   }
