@@ -1,7 +1,7 @@
 import axios from "axios";
 // import { getOrdersByDateRange } from "./shopifyAPI.js";
 
-const config = {
+const config: any = {
   headers: {
     "Content-Type": "application/json",
     "X-Shopify-Access-Token": process.env.access_token,

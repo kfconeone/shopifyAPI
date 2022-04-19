@@ -21,28 +21,8 @@ admin.initializeApp({
 });
 
 export default async (request: VercelRequest, response: VercelResponse) => {
-  let product = request.body;
-  let results: IProduct[] = [];
-
-  product.variants.forEach((variant: any) => {
-    let temp: IProduct = {
-      vid: "gid://shopify/ProductVariant/" + variant.id.toString(),
-      sku: variant.sku,
-      price: variant.price,
-      handle: product.handle,
-    };
-    results.push(temp);
-  });
-
-  const db = admin.firestore();
   try {
-    for (let i = 0; i < results.length; i++) {
-      // console.log(result.vid.replace(/\//g, "").replace(":", ""));
-      await db
-        .collection("products")
-        .doc(results[i].vid.replace(/\//g, "").replace(":", ""))
-        .set(results[i]);
-    }
+    console.log(request.body);
   } catch (e) {
     console.log(e);
   }
