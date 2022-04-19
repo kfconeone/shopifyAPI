@@ -1,5 +1,6 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import admin = require("firebase-admin");
+import { IProduct } from "../interface/base";
 
 const serviceAccount: admin.ServiceAccount = {
   projectId: process.env.project_id,
@@ -13,10 +14,10 @@ admin.initializeApp({
 
 export default async (request: VercelRequest, response: VercelResponse) => {
   let product = request.body;
-  let results: any = [];
+  let results: IProduct[] = [];
 
   product.variants.forEach((variant: any) => {
-    let temp = {
+    let temp: IProduct = {
       vid: "gid://shopify/ProductVariant/" + variant.id.toString(),
       sku: variant.sku,
       price: variant.price,
@@ -24,7 +25,7 @@ export default async (request: VercelRequest, response: VercelResponse) => {
     };
     results.push(temp);
   });
-  console.log(results);
+
   const db = admin.firestore();
   try {
     for (let i = 0; i < results.length; i++) {
