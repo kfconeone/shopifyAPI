@@ -94,6 +94,7 @@ async function setOrders() {
         result["customer"] = temp.customer.displayName;
         result["email"] = temp.customer.email;
         result["createdAt"] = moment(temp.createdAt).valueOf();
+        result["updatedAt"] = moment(temp.updatedAt).valueOf();
         result["amount"] = temp.currentTotalPriceSet.shopMoney.amount;
 
         result["kolSuffix"] =
