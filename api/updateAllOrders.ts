@@ -35,9 +35,11 @@ async function setOrders() {
   // 1. 向Shopify發送請求，取得 BulkOperation ID
   let isCreating = false;
   let operationQuery;
+  let startDate = moment(new Date()).add(-1, "d").format("YYYY-MM-DD");
+  let endDate = moment(new Date()).format("YYYY-MM-DD");
 
   while (!isCreating) {
-    operationQuery = await queryOrdersByDateRange("2022-04-01", "2022-04-30");
+    operationQuery = await queryOrdersByDateRange(startDate, endDate);
     await waiter.WaitMilliseconds(300);
 
     if (
