@@ -36,7 +36,7 @@ async function setOrders() {
   let isCreating = false;
   let operationQuery;
   let startDate = moment(new Date()).add(-1, "d").format("YYYY-MM-DD");
-  let endDate = moment(new Date()).format("YYYY-MM-DD");
+  let endDate = moment(new Date()).add(1, "d").format("YYYY-MM-DD");
 
   while (!isCreating) {
     operationQuery = await queryOrdersByDateRange(startDate, endDate);
