@@ -20,8 +20,9 @@ export default async (request: VercelRequest, response: VercelResponse) => {
     let temp: IProduct = {
       vid: "gid://shopify/ProductVariant/" + variant.id.toString(),
       sku: variant.sku,
-      price: variant.price,
+      price: parseInt(variant.price),
       handle: product.handle,
+      default: 0.8,
     };
     results.push(temp);
   });

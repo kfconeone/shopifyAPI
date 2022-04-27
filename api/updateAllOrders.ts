@@ -72,7 +72,6 @@ async function setOrders() {
     let orders: any = {};
 
     console.log(result);
-    //for 迴圈每一個訂單
     for (let i = 0; i < strArr.length; i++) {
       if (strArr[i] == "") continue;
 
@@ -110,14 +109,45 @@ async function setOrders() {
       }
     }
     // 將資料寫入FireStore資料庫;
-    let ordersArr: any = Object.values(orders);
+
+    let ordersArr: any[] = Object.values(orders);
     const db = admin.firestore();
+    let kolCommissions: any = {};
+    let allProducts: any = {};
+    let allProductsQuery = await db.collection("products").get();
+
+    allProductsQuery.forEach((doc) => {
+      allProducts[doc.id] = doc.data();
+    });
 
     for (let i = 0; i < ordersArr.length; i++) {
       if (ordersArr[i]) {
-        console.log(ordersArr[i]);
-        let tempId = ordersArr[i].id.replace(/\:/g, "").replace(/\//g, "");
-        // await db.collection("orders").doc(tempId).set(ordersArr[i]);
+        let kolSuffix = ordersArr[i].kolSuffix;
+        // console.log(kols[kolSuffix]);
+        if (kolCommissions[kolSuffix] == undefined) {
+          let result = await db
+            .collection("members")
+            .where("urlsuffix", "==", kolSuffix)
+            .get();
+
+          result.forEach((doc) => {
+            kolCommissions[kolSuffix] = doc.data().products;
+          });
+        }
+
+        ordersArr[i].productCommissions = kolCommissions[kolSuffix];
+        Object.keys(ordersArr[i].items).forEach((itemId) => {
+          if (kolCommissions[kolSuffix][itemId]) {
+            ordersArr[i].items[itemId].commission =
+              kolCommissions[kolSuffix][itemId];
+          } else {
+            ordersArr[i].items[itemId].commission = 0;
+          }
+        });
+
+        let docId = ordersArr[i].id.replaceAll("/", "").replaceAll(":", "");
+
+        await db.collection("orders").doc(docId).set(ordersArr[i]);
       }
     }
   }
@@ -191,6 +221,7 @@ async function setProducts() {
         newProducts[v.id].price = v.price;
         newProducts[v.id].vid = v.id;
         newProducts[v.id].sku = v.sku;
+        newProducts[v.id].default = 0.8;
       });
     });
 

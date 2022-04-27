@@ -20,7 +20,8 @@ export interface IOrder {
 
 export interface IProduct {
   handle: string;
-  price: string;
+  price: number;
   sku: string;
   vid: string;
+  default: number;
 }
