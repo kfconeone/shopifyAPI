@@ -57,7 +57,7 @@ async function setOrders() {
   let response;
   while (!isCompleted) {
     response = await getBulkOperationStatus(operationQuery.bulkOperation.id);
-    await waiter.WaitMilliseconds(300);
+    await waiter.WaitMilliseconds(100);
     if (response.status == "COMPLETED") isCompleted = true;
     else {
       console.log("Not yet Finished or Error");
@@ -72,6 +72,7 @@ async function setOrders() {
     let orders: any = {};
 
     console.log(result);
+    //for 迴圈每一個訂單
     for (let i = 0; i < strArr.length; i++) {
       if (strArr[i] == "") continue;
 
@@ -114,8 +115,9 @@ async function setOrders() {
 
     for (let i = 0; i < ordersArr.length; i++) {
       if (ordersArr[i]) {
+        console.log(ordersArr[i]);
         let tempId = ordersArr[i].id.replace(/\:/g, "").replace(/\//g, "");
-        await db.collection("orders").doc(tempId).set(ordersArr[i]);
+        // await db.collection("orders").doc(tempId).set(ordersArr[i]);
       }
     }
   }
@@ -145,7 +147,7 @@ async function setProducts() {
   let response;
   while (!isCompleted) {
     response = await getBulkOperationStatus(operationQuery.bulkOperation.id);
-    await waiter.WaitMilliseconds(300);
+    await waiter.WaitMilliseconds(100);
     if (response.status == "COMPLETED") isCompleted = true;
     else {
       console.log("Not yet Finished or Error");
