@@ -2,7 +2,7 @@ export interface ILineItem {
   quantity: number;
   sku: string;
   title: string;
-  vid: string;
+  price: number;
 }
 
 export interface IOrder {
@@ -18,10 +18,19 @@ export interface IOrder {
   status?: string; //KOL 領取紅利了沒
 }
 
+export interface IOrders {
+  [key: string]: IOrder;
+}
+
 export interface IProduct {
   handle: string;
   price: number;
   sku: string;
-  vid: string;
   default: number;
+  vid: string;
+  ex: {};
+}
+
+export interface IProducts {
+  [key: string]: IProduct;
 }

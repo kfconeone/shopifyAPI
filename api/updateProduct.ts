@@ -22,6 +22,8 @@ export default async (request: VercelRequest, response: VercelResponse) => {
       sku: variant.sku,
       price: parseInt(variant.price),
       handle: product.handle,
+      default: product.default,
+      ex: product.ex,
     };
     results.push(temp);
   });

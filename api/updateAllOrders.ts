@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import admin = require("firebase-admin");
-import { IProduct } from "../interface/base";
+import { IProducts, IOrder, IOrders } from "../interface/base";
 import {
   queryOrdersByDateRange,
   getBulkOperationStatus,
@@ -71,7 +71,14 @@ async function setOrders() {
     let strArr = result.toString().split("\n");
     let orders: any = {};
 
-    console.log(result);
+    //取得所有的產品, 目的是為了取得KOL在該產品的基本抽成
+    const db = admin.firestore();
+    let allProducts: any = {};
+    let allProductsQuery = await db.collection("products").get();
+    allProductsQuery.forEach((doc) => {
+      allProducts[doc.id] = doc.data();
+    });
+
     for (let i = 0; i < strArr.length; i++) {
       if (strArr[i] == "") continue;
 
@@ -81,69 +88,75 @@ async function setOrders() {
 
       //是購物車資料
       if (temp.__parentId) {
-        console.log(temp);
+        let tempId = temp.variant.id.replace(/\:/g, "").replace(/\//g, "");
         result["quantity"] = temp.quantity;
         result["sku"] = temp.sku;
         result["title"] = temp.title;
-        result["vid"] = temp.variant.id;
-        let tempId = temp.variant.id.replace(/\:/g, "").replace(/\//g, "");
+        result["price"] = allProducts[tempId].price;
         orders[temp.__parentId].items[tempId] = result;
       } else {
         //是訂單資料
-        result["id"] = temp.id;
-        result["name"] = temp.name;
-        result["fullyPaid"] = temp.fullyPaid;
+        result["amount"] = temp.currentTotalPriceSet.shopMoney.amount;
+        result["createdAt"] = moment(temp.createdAt).valueOf();
+        result["createdAt"] = moment(temp.updatedAt).valueOf();
         result["customer"] = temp.customer.displayName;
         result["email"] = temp.customer.email;
-        result["createdAt"] = moment(temp.createdAt).valueOf();
-        result["updatedAt"] = moment(temp.updatedAt).valueOf();
-        result["amount"] = temp.currentTotalPriceSet.shopMoney.amount;
-
-        result["kolSuffix"] =
+        result["id"] = temp.id.replace(/\:/g, "").replace(/\//g, "");
+        result["fullyPaid"] = temp.fullyPaid;
+        result["urlsuffix"] =
           temp.customAttributes.length > 0
             ? temp.customAttributes[0].value
             : "";
+        result["name"] = temp.name;
         result["items"] = {};
-
         orders[temp.id] = result;
       }
     }
     // 將資料寫入FireStore資料庫;
-
     let ordersArr: any[] = Object.values(orders);
-    const db = admin.firestore();
-    let kolCommissions: any = {};
-    let allProducts: any = {};
-    let allProductsQuery = await db.collection("products").get();
+    console.log(ordersArr.length);
 
-    allProductsQuery.forEach((doc) => {
-      allProducts[doc.id] = doc.data();
-    });
+    let kols: any = {};
 
     for (let i = 0; i < ordersArr.length; i++) {
       if (ordersArr[i]) {
-        let kolSuffix = ordersArr[i].kolSuffix;
-        // console.log(kols[kolSuffix]);
-        if (kolCommissions[kolSuffix] == undefined) {
-          let result = await db
-            .collection("members")
-            .where("urlsuffix", "==", kolSuffix)
-            .get();
+        let urlsuffix = ordersArr[i].urlsuffix;
 
-          result.forEach((doc) => {
-            kolCommissions[kolSuffix] = doc.data().products;
-          });
+        if (!kols[urlsuffix]) {
+          kols[urlsuffix] = await getKolBySuffix(urlsuffix, db);
         }
 
-        ordersArr[i].productCommissions = kolCommissions[kolSuffix];
-        Object.keys(ordersArr[i].items).forEach((itemId) => {
-          if (kolCommissions[kolSuffix][itemId]) {
-            ordersArr[i].items[itemId].commission =
-              kolCommissions[kolSuffix][itemId];
-          } else {
-            ordersArr[i].items[itemId].commission = 0;
+        let parentUrlsuffix = kols[urlsuffix].parent;
+        if (parentUrlsuffix != "") {
+          if (!kols[parentUrlsuffix]) {
+            kols[parentUrlsuffix] = await getKolBySuffix(parentUrlsuffix, db);
           }
+        }
+
+        Object.keys(ordersArr[i].items).forEach((key) => {
+          //先取得kol的基本抽成
+
+          // let selfCommission = !allProducts[key].ex[urlsuffix] //如果沒有設定抽成，就用預設的抽成
+          //   ? allProducts[key].price * allProducts[key].ex[urlsuffix]
+          //   : allProducts[key].price * allProducts[key].default;
+          let selfCommission = Math.ceil(
+            allProducts[key].price * allProducts[key].default
+          );
+
+          //再取得要給予上層的抽成
+          let parentCommission =
+            parentUrlsuffix != ""
+              ? Math.ceil(
+                  selfCommission *
+                    kols[parentUrlsuffix].downlines[urlsuffix][key]
+                )
+              : 0;
+
+          ordersArr[i].items[key].selfCommission = selfCommission;
+          ordersArr[i].items[key].parentCommission = parentCommission;
         });
+
+        // console.log(ordersArr[i]);
 
         let docId = ordersArr[i].id.replaceAll("/", "").replaceAll(":", "");
 
@@ -151,6 +164,19 @@ async function setOrders() {
       }
     }
   }
+}
+
+async function getKolBySuffix(urlsuffix: string, db: any) {
+  let tempQuery = await db
+    .collection("members")
+    .where("urlsuffix", "==", urlsuffix)
+    .get();
+  let self = {};
+  tempQuery.forEach((doc: any) => {
+    self = doc.data();
+  });
+
+  return self;
 }
 
 async function setProducts() {

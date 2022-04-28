@@ -23,6 +23,7 @@ export default async (request: VercelRequest, response: VercelResponse) => {
       price: parseInt(variant.price),
       handle: product.handle,
       default: 0.8,
+      ex: {},
     };
     results.push(temp);
   });
