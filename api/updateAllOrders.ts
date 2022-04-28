@@ -98,7 +98,7 @@ async function setOrders() {
         //是訂單資料
         result["amount"] = temp.currentTotalPriceSet.shopMoney.amount;
         result["createdAt"] = moment(temp.createdAt).valueOf();
-        result["createdAt"] = moment(temp.updatedAt).valueOf();
+        result["updatedAt"] = moment(temp.updatedAt).valueOf();
         result["customer"] = temp.customer.displayName;
         result["email"] = temp.customer.email;
         result["id"] = temp.id.replace(/\:/g, "").replace(/\//g, "");
