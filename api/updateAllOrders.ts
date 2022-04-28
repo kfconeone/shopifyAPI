@@ -152,7 +152,8 @@ async function setOrders() {
                 )
               : 0;
 
-          ordersArr[i].items[key].selfCommission = selfCommission;
+          ordersArr[i].items[key].selfCommission =
+            selfCommission - parentCommission;
           ordersArr[i].items[key].parentCommission = parentCommission;
         });
 
