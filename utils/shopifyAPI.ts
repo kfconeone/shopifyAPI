@@ -121,13 +121,13 @@ export async function queryAllProducts() {
                             edges {
                               node {
                                 id
-                                handle
                                 variants(first: 10) {
                                   edges {
                                     node {
                                       id
                                       sku
                                       price
+                                      displayName
                                     }
                                   }
                                 }
