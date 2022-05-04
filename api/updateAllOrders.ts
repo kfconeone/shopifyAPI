@@ -1,6 +1,5 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import admin = require("firebase-admin");
-import { IProducts, IOrder, IOrders } from "../interface/base";
 import {
   queryOrdersByDateRange,
   getBulkOperationStatus,
