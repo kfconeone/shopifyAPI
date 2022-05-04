@@ -20,7 +20,7 @@ admin.initializeApp({
 
 export default async (request: VercelRequest, response: VercelResponse) => {
   let product = request.body;
-
+  console.log(product);
   await setProducts();
 
   response.status(200).send("Hello World!");
