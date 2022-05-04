@@ -15,7 +15,7 @@ admin.initializeApp({
 export default async (request: VercelRequest, response: VercelResponse) => {
   let product = request.body;
   let results: IProduct[] = [];
-
+  console.log(product);
   product.variants.forEach((variant: any) => {
     let temp: IProduct = {
       vid: "gid://shopify/ProductVariant/" + variant.id.toString(),
