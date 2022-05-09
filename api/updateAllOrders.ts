@@ -33,11 +33,29 @@ export default async (request: VercelRequest, response: VercelResponse) => {
 //#region 取得所有訂單
 async function setOrders() {
   // 1. 向Shopify發送請求，取得 BulkOperation ID
+  let db = admin.firestore();
   let isCreating = false;
   let operationQuery;
+  let currentDatetime = moment().valueOf();
+  let ordersMeta = null;
+  let beginDate = "2022-04-01";
+  let endDate = moment(currentDatetime).format("YYYY-MM-DD");
+
+  ordersMeta = await (
+    await db.collection("systems").doc("orders").get()
+  ).data();
+
+  if (ordersMeta != null) {
+    beginDate = ordersMeta.lastUpdateDatetime;
+  }
+
+  // console.log(moment(beginDate).format("YYYY-MM-DD HH:mm:ss"));
+  // console.log(moment(currentDatetime).format("YYYY-MM-DD HH:mm:ss"));
+  if (moment(currentDatetime).diff(moment(beginDate), "hours") < 12) return;
+  else beginDate = moment(beginDate).format("YYYY-MM-DD");
 
   while (!isCreating) {
-    operationQuery = await queryOrdersByDateRange("2022-04-01", "2022-04-30");
+    operationQuery = await queryOrdersByDateRange(beginDate, endDate);
     await waiter.WaitMilliseconds(300);
 
     if (
@@ -70,7 +88,7 @@ async function setOrders() {
     let orders: any = {};
 
     //取得所有的產品, 目的是為了取得KOL在該產品的基本抽成
-    const db = admin.firestore();
+
     let allProducts: any = {};
     let allProductsQuery = await db.collection("products").get();
     allProductsQuery.forEach((doc) => {
@@ -152,6 +170,20 @@ async function setOrders() {
         db.collection("orders").doc(ordersArr[i].id).set(ordersArr[i])
       );
     }
+
+    db.collection("systems").doc("orders").set({
+      lastUpdate: moment().valueOf(),
+    });
+
+    //修改最後更新時間
+    orderPromises.push(
+      db.collection("systems").doc("orders").set({
+        lastUpdateDatetime: currentDatetime,
+      })
+    );
+
+    // orderPromises.push();
+
     await Promise.all(orderPromises);
   }
 }
