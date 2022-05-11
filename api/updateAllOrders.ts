@@ -120,7 +120,7 @@ async function setOrders() {
         orders[temp.__parentId].items[tempId] = result;
       } else {
         //是訂單資料
-        result["amount"] = temp.currentTotalPriceSet.shopMoney.amount;
+        result["amount"] = parseInt(temp.currentTotalPriceSet.shopMoney.amount);
         result["createdAt"] = moment(temp.createdAt).valueOf();
         result["updatedAt"] = moment(temp.updatedAt).valueOf();
         result["customer"] = temp.customer.displayName;
@@ -163,7 +163,6 @@ async function setOrders() {
         }
         order.items[key].max = allProducts[key].max;
         order.items[key].commissions = commissions;
-        console.log(ordersArr[i]);
       }
 
       orderPromises.push(
@@ -204,7 +203,7 @@ function getAncestorsCommissionPercentageFormula(
     if (i < preprocessedPercentage.length - 1) {
       preformula.push(
         parseFloat(
-          (preprocessedPercentage[i] - preprocessedPercentage[i + 1]).toFixed(1)
+          (preprocessedPercentage[i] - preprocessedPercentage[i + 1]).toFixed(2)
         )
       );
     } else {
