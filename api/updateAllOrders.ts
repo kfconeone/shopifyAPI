@@ -39,7 +39,7 @@ async function setOrders() {
   let currentDatetime = moment().valueOf();
   let ordersMeta = null;
   let beginDate = "2022-04-01";
-  let endDate = moment(currentDatetime).format("YYYY-MM-DD");
+  let endDate = moment(currentDatetime).add(1, "days").format("YYYY-MM-DD");
 
   ordersMeta = await (
     await db.collection("systems").doc("orders").get()
@@ -141,11 +141,14 @@ async function setOrders() {
 
     for (let i = 0; i < ordersArr.length; i++) {
       let order = ordersArr[i];
-      let formula: any = getAncestorsCommissionPercentageFormula(
-        order.urlsuffix,
-        allMembers[order.urlsuffix].ancestors,
-        allMembers
-      );
+      let formula: any =
+        order.urlsuffix == "none"
+          ? { ADMIN_URL: 1 }
+          : getAncestorsCommissionPercentageFormula(
+              order.urlsuffix,
+              allMembers[order.urlsuffix].ancestors,
+              allMembers
+            );
 
       ordersArr[i].totalCommissions = {};
       for (let fkey in formula) {
