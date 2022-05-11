@@ -20,7 +20,7 @@ export default async (request: VercelRequest, response: VercelResponse) => {
     request.body.endDate,
     request.body.urlsuffixs
   );
-  response.status(200).json(result);
+  response.status(200).send(result);
 };
 
 async function getOrdersByDateRanges(
