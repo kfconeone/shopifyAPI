@@ -33,14 +33,11 @@ async function getOrdersByDateRanges(
 ) {
   const db = admin.firestore();
 
-  let result: any = [];
   let q = await db
     .collection("orders")
     .where("createdAt", ">=", startDate)
     .where("createdAt", "<=", endDate)
     .get();
-
-  console.log(q.size);
 
   let orders: any = [];
   q.forEach((doc) => {
@@ -50,7 +47,6 @@ async function getOrdersByDateRanges(
   orders = orders.filter((o: any) => {
     return urlsuffixs.includes(o.urlsuffix);
   });
-  console.log(orders);
 
-  return result;
+  return orders;
 }
