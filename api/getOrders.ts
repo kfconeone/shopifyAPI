@@ -22,7 +22,7 @@ export default async (request: VercelRequest, response: VercelResponse) => {
     );
     response.status(200).json(result);
   } else {
-    response.status(200);
+    response.status(200).send("Hello World!");
   }
 };
 
