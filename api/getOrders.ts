@@ -13,14 +13,17 @@ admin.initializeApp({
 
 export default async (request: VercelRequest, response: VercelResponse) => {
   // console.log(request);
-
-  console.log(request.body);
-  let result = await getOrdersByDateRanges(
-    request.body.startDate,
-    request.body.endDate,
-    request.body.urlsuffixs
-  );
-  response.status(200).json(result);
+  if (request.method == "POST") {
+    console.log(request.body);
+    let result = await getOrdersByDateRanges(
+      request.body.startDate,
+      request.body.endDate,
+      request.body.urlsuffixs
+    );
+    response.status(200).json(result);
+  } else {
+    response.status(200);
+  }
 };
 
 async function getOrdersByDateRanges(
