@@ -40,6 +40,8 @@ async function getOrdersByDateRanges(
     .where("createdAt", "<=", endDate)
     .get();
 
+  console.log(q.size);
+
   let orders: any = [];
   q.forEach((doc) => {
     orders.push(doc.data());
@@ -48,6 +50,7 @@ async function getOrdersByDateRanges(
   orders = orders.filter((o: any) => {
     return urlsuffixs.includes(o.urlsuffix);
   });
+  console.log(orders);
 
   return result;
 }
