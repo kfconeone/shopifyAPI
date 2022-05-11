@@ -12,15 +12,15 @@ admin.initializeApp({
 });
 
 export default async (request: VercelRequest, response: VercelResponse) => {
-  console.log(request);
+  // console.log(request);
 
   console.log(request.body);
-  let result = await getOrdersByDateRanges(
-    request.body.startDate,
-    request.body.endDate,
-    request.body.urlsuffixs
-  );
-  response.status(200).send(result);
+  // let result = await getOrdersByDateRanges(
+  //   request.body.startDate,
+  //   request.body.endDate,
+  //   request.body.urlsuffixs
+  // );
+  response.status(200).send("OK");
 };
 
 async function getOrdersByDateRanges(
