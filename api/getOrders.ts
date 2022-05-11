@@ -12,6 +12,8 @@ admin.initializeApp({
 });
 
 export default async (request: VercelRequest, response: VercelResponse) => {
+  console.log(request);
+
   console.log(request.body);
   let result = await getOrdersByDateRanges(
     request.body.startDate,
