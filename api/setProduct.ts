@@ -7,6 +7,7 @@ import {
 } from "../utils/shopifyAPI";
 import axios from "axios";
 import * as waiter from "flag-waiter";
+import moment = require("moment");
 
 const serviceAccount: admin.ServiceAccount = {
   projectId: process.env.project_id,
@@ -113,6 +114,10 @@ async function setProducts() {
           .set(productsArr[i]);
       }
     }
+
+    await db.collection("systems").doc("products").set({
+      lastUpdateDatetime: moment().valueOf(),
+    });
   }
 }
 

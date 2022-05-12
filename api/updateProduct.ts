@@ -1,5 +1,6 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import admin = require("firebase-admin");
+import moment = require("moment");
 // import { IProduct } from "../interface/base";
 
 const serviceAccount: admin.ServiceAccount = {
@@ -36,7 +37,11 @@ export default async (request: VercelRequest, response: VercelResponse) => {
         db.collection("products").doc(results[i].vid).update(results[i])
       );
     }
-
+    promises.push(
+      db.collection("systems").doc("products").set({
+        lastUpdateDatetime: moment().valueOf(),
+      })
+    );
     await Promise.all(promises);
   } catch (e) {
     console.log(e);
