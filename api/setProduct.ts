@@ -97,7 +97,7 @@ async function setProducts() {
         newProducts[v.id].price = parseInt(v.price);
         newProducts[v.id].vid = v.id.replace(/\:/g, "").replace(/\//g, "");
         newProducts[v.id].sku = v.sku;
-        newProducts[v.id].max = 50;
+        newProducts[v.id].max = 0.5;
       });
     });
 
