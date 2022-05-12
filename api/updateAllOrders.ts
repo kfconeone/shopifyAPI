@@ -33,13 +33,13 @@ export default async (request: VercelRequest, response: VercelResponse) => {
 //#region 取得所有訂單
 async function setOrders() {
   // 1. 向Shopify發送請求，取得 BulkOperation ID
-  let db = admin.firestore();
   let isCreating = false;
   let operationQuery;
   let currentDatetime = moment().valueOf();
   let ordersMeta = null;
   let beginDate = "2022-04-01";
   let endDate = moment(currentDatetime).add(1, "days").format("YYYY-MM-DD");
+  let db = admin.firestore();
 
   ordersMeta = await (
     await db.collection("systems").doc("orders").get()
@@ -49,12 +49,11 @@ async function setOrders() {
     beginDate = ordersMeta.lastUpdateDatetime;
   }
 
-  // console.log(moment(beginDate).format("YYYY-MM-DD HH:mm:ss"));
-  // console.log(moment(currentDatetime).format("YYYY-MM-DD HH:mm:ss"));
+  console.log(moment(beginDate).format("YYYY-MM-DD HH:mm:ss"));
+  console.log(moment(currentDatetime).format("YYYY-MM-DD HH:mm:ss"));
+  //check if currentDatetime - beginDate > 1day
   // if (moment(currentDatetime).diff(moment(beginDate), "hours") < 12) return;
   // else beginDate = moment(beginDate).format("YYYY-MM-DD");
-  beginDate = moment(beginDate).format("YYYY-MM-DD");
-
   while (!isCreating) {
     operationQuery = await queryOrdersByDateRange(beginDate, endDate);
     await waiter.WaitMilliseconds(300);
@@ -92,13 +91,13 @@ async function setOrders() {
 
     let allProducts: any = {};
     let allProductsQuery = await db.collection("products").get();
-    allProductsQuery.forEach((doc) => {
+    allProductsQuery.forEach((doc: any) => {
       allProducts[doc.id] = doc.data();
     });
 
     let allMembers: any = {};
     let allMembersQuery = await db.collection("members").get();
-    allMembersQuery.forEach((doc) => {
+    allMembersQuery.forEach((doc: any) => {
       allMembers[doc.data().urlsuffix] = doc.data();
     });
 
@@ -141,8 +140,9 @@ async function setOrders() {
     let ordersArr: any[] = Object.values(orders);
 
     for (let i = 0; i < ordersArr.length; i++) {
-      let order = ordersArr[i];
-      let formula: any =
+      let order: any = ordersArr[i];
+
+      let formula =
         order.urlsuffix == "none"
           ? { ADMIN_URL: 1 }
           : getAncestorsCommissionPercentageFormula(
@@ -160,23 +160,24 @@ async function setOrders() {
         let commissions: any = {};
         for (let fkey in formula) {
           commissions[fkey] = Math.floor(
-            allProducts[key].max * formula[fkey] * order.items[key].quantity
+            allProducts[key].price *
+              allProducts[key].max *
+              formula[fkey] *
+              order.items[key].quantity
           );
 
           ordersArr[i].totalCommissions[fkey] += commissions[fkey];
         }
         order.items[key].max = allProducts[key].max;
         order.items[key].commissions = commissions;
+
+        console.log(ordersArr[i]);
       }
 
       orderPromises.push(
         db.collection("orders").doc(ordersArr[i].id).set(ordersArr[i])
       );
     }
-
-    db.collection("systems").doc("orders").set({
-      lastUpdate: moment().valueOf(),
-    });
 
     //修改最後更新時間
     orderPromises.push(
@@ -185,9 +186,11 @@ async function setOrders() {
       })
     );
 
-    // orderPromises.push();
-
-    await Promise.all(orderPromises);
+    try {
+      await Promise.all(orderPromises);
+    } catch (e) {
+      console.log(e);
+    }
   }
 }
 
