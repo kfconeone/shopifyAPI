@@ -51,8 +51,9 @@ async function setOrders() {
 
   // console.log(moment(beginDate).format("YYYY-MM-DD HH:mm:ss"));
   // console.log(moment(currentDatetime).format("YYYY-MM-DD HH:mm:ss"));
-  if (moment(currentDatetime).diff(moment(beginDate), "hours") < 12) return;
-  else beginDate = moment(beginDate).format("YYYY-MM-DD");
+  // if (moment(currentDatetime).diff(moment(beginDate), "hours") < 12) return;
+  // else beginDate = moment(beginDate).format("YYYY-MM-DD");
+  beginDate = moment(beginDate).format("YYYY-MM-DD");
 
   while (!isCreating) {
     operationQuery = await queryOrdersByDateRange(beginDate, endDate);
