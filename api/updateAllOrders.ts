@@ -22,7 +22,11 @@ admin.initializeApp({
 export default async (request: VercelRequest, response: VercelResponse) => {
   try {
     console.log(request.body);
-    await setOrders();
+    if (request.body.withoutdelay == true) {
+      await setOrders(true);
+    } else {
+      await setOrders();
+    }
   } catch (e) {
     console.log(e);
   }
@@ -31,7 +35,7 @@ export default async (request: VercelRequest, response: VercelResponse) => {
 };
 
 //#region 取得所有訂單
-async function setOrders() {
+async function setOrders(withoutdelay: boolean = false) {
   // 1. 向Shopify發送請求，取得 BulkOperation ID
   let isCreating = false;
   let operationQuery;
@@ -52,7 +56,10 @@ async function setOrders() {
   console.log(moment(beginDate).format("YYYY-MM-DD HH:mm:ss"));
   console.log(moment(currentDatetime).format("YYYY-MM-DD HH:mm:ss"));
   //check if currentDatetime - beginDate > 1day
-  // if (moment(currentDatetime).diff(moment(beginDate), "hours") < 12) return;
+  if (!withoutdelay) {
+    if (moment(currentDatetime).diff(moment(beginDate), "hours") < 12) return;
+  }
+
   // else beginDate = moment(beginDate).format("YYYY-MM-DD");
   while (!isCreating) {
     operationQuery = await queryOrdersByDateRange(beginDate, endDate);

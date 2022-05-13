@@ -1,5 +1,6 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import admin = require("firebase-admin");
+import moment = require("moment");
 
 const serviceAccount: admin.ServiceAccount = {
   projectId: process.env.project_id,
@@ -32,6 +33,12 @@ export default async (request: VercelRequest, response: VercelResponse) => {
   for (let i in deleteIds) {
     promises.push(db.collection("products").doc(deleteIds[i]).delete());
   }
+
+  promises.push(
+    db.collection("systems").doc("products").set({
+      lastUpdateDatetime: moment().valueOf(),
+    })
+  );
 
   await Promise.all(promises);
 
