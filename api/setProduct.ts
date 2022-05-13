@@ -79,6 +79,7 @@ async function setProducts() {
         result["sku"] = temp.sku;
         result["id"] = temp.id;
         result["price"] = temp.price;
+        result["pid"] = temp.__parentId;
         result["displayName"] = temp.displayName;
         products[temp.__parentId].variants.push(result);
       } else {
@@ -95,6 +96,7 @@ async function setProducts() {
       p.variants.forEach((v: any) => {
         newProducts[v.id] = {};
         newProducts[v.id].displayName = v.displayName;
+        newProducts[v.id].pid = v.pid;
         newProducts[v.id].price = parseInt(v.price);
         newProducts[v.id].vid = v.id.replace(/\:/g, "").replace(/\//g, "");
         newProducts[v.id].sku = v.sku;
