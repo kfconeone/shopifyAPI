@@ -15,5 +15,25 @@ export default async (request: VercelRequest, response: VercelResponse) => {
   // console.log(request);
 
   console.log(request.body);
+
+  const db = admin.firestore();
+
+  let q = await db
+    .collection("products")
+    .where("pid", "==", `gid://shopify/Product/${request.body.id}`)
+    .get();
+
+  let deleteIds: string[] = [];
+  q.forEach((doc) => {
+    deleteIds.push(doc.id);
+  });
+
+  let promises = [];
+  for (let i in deleteIds) {
+    promises.push(db.collection("products").doc(deleteIds[i]).delete());
+  }
+
+  await Promise.all(promises);
+
   response.status(200).send("Hello World!");
 };
