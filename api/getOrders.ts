@@ -45,7 +45,7 @@ async function getOrdersByDateRanges(
   });
 
   orders = orders.filter((o: any) => {
-    return urlsuffixs.includes(o.urlsuffix);
+    return urlsuffixs.includes(o.urlsuffix) && o.fullyPaid;
   });
 
   return orders;
