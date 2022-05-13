@@ -13,7 +13,13 @@ admin.initializeApp({
 
 export default async (request: VercelRequest, response: VercelResponse) => {
   // console.log(request);
+  const db = admin.firestore();
+  await db
+    .collection("orders")
+    .doc(
+      request.body["admin_graphql_api_id"].replace(/\:/g, "").replace(/\//g, "")
+    )
+    .delete();
 
-  console.log(request.body["admin_graphql_api_id"]);
   response.status(200).send("Hello World!");
 };
