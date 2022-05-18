@@ -81,7 +81,7 @@ export default async (request: VercelRequest, response: VercelResponse) => {
 
   promises.push(
     db.collection("systems").doc("orders").set({
-      lastUpdateDatetime: moment().valueOf(),
+      lastUpdatedDatetime: moment().valueOf(),
     })
   );
 

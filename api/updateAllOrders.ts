@@ -50,7 +50,7 @@ async function setOrders(withoutdelay: boolean = false) {
   ).data();
 
   if (ordersMeta != null) {
-    beginDate = ordersMeta.lastUpdateDatetime;
+    beginDate = ordersMeta.lastUpdatedDatetime;
   }
 
   console.log(moment(beginDate).format("YYYY-MM-DD HH:mm:ss"));
@@ -192,7 +192,7 @@ async function setOrders(withoutdelay: boolean = false) {
     //修改最後更新時間
     orderPromises.push(
       db.collection("systems").doc("orders").set({
-        lastUpdateDatetime: currentDatetime,
+        lastUpdatedDatetime: currentDatetime,
       })
     );
 

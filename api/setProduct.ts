@@ -118,7 +118,7 @@ async function setProducts() {
     }
 
     await db.collection("systems").doc("products").set({
-      lastUpdateDatetime: moment().valueOf(),
+      lastUpdatedDatetime: moment().valueOf(),
     });
   }
 }
