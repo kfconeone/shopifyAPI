@@ -134,6 +134,9 @@ async function setOrders(withoutdelay: boolean = false) {
         result["email"] = temp.customer.email;
         result["id"] = temp.id.replace(/\:/g, "").replace(/\//g, "");
         result["fullyPaid"] = temp.fullyPaid;
+        temp.customAttributes = temp.customAttributes.filter(
+          (item: any) => item.key == "kolsuffix"
+        );
         result["urlsuffix"] =
           temp.customAttributes.length > 0
             ? temp.customAttributes[0].value

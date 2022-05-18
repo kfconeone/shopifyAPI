@@ -44,6 +44,7 @@ async function getOrdersByDateRanges(
     orders.push(doc.data());
   });
 
+  //如果urlsuffixs為none, 代表不是透過kol的網址購買, 為自然流量
   orders = orders.filter((o: any) => {
     return urlsuffixs.includes(o.urlsuffix) && o.fullyPaid;
   });
