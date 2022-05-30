@@ -13,7 +13,7 @@ admin.initializeApp({
 
 export default async (request: VercelRequest, response: VercelResponse) => {
   if (request.method == "OPTIONS") {
-    response.status(200);
+    response.status(200).send("OPTIONS");
   } else {
     console.log(request.body);
     let result = await getAllDownlines(request.body.parentSuffix);
