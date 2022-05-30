@@ -12,7 +12,7 @@ admin.initializeApp({
 });
 
 export default async (request: VercelRequest, response: VercelResponse) => {
-  if (request.body.parentSuffix == undefined) {
+  if (request.method == "OPTIONS") {
     response.status(200);
   } else {
     console.log(request.body);
