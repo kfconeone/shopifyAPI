@@ -12,7 +12,10 @@ admin.initializeApp({
 });
 
 export default async (request: VercelRequest, response: VercelResponse) => {
-  console.log(request);
+  if (request.body.parentSuffix == undefined) {
+    response.status(200);
+    return;
+  }
 
   console.log(request.body);
   let result = await getAllDownlines(request.body.parentSuffix);
