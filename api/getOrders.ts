@@ -1,5 +1,6 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import admin = require("firebase-admin");
+import moment = require("moment");
 
 const serviceAccount: admin.ServiceAccount = {
   projectId: process.env.project_id,
@@ -38,6 +39,9 @@ async function getOrdersByDateRanges(
     .where("createdAt", ">=", startDate)
     .where("createdAt", "<=", endDate)
     .get();
+
+  console.log(moment(startDate));
+  console.log(moment(endDate));
 
   let orders: any = [];
   q.forEach((doc) => {
