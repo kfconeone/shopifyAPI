@@ -44,13 +44,17 @@ async function getOrdersByDateRanges(
     orders.push(doc.data());
   });
 
-  console.log(orders);
+  for (let i = 0; i < orders.length; i++) {
+    console.log(orders[i].name, orders[i].urlsuffix);
+  }
   //如果urlsuffixs為none, 代表不是透過kol的網址購買, 為自然流量
   orders = orders.filter((o: any) => {
     return urlsuffixs.includes(o.urlsuffix) && o.fullyPaid;
   });
 
-  console.log(orders);
+  for (let i = 0; i < orders.length; i++) {
+    console.log(orders[i].name, orders[i].urlsuffix);
+  }
 
   return orders;
 }
