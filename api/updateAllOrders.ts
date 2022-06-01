@@ -53,8 +53,8 @@ async function setOrders(withoutdelay: boolean = false) {
     beginDate = ordersMeta.lastUpdatedDatetime;
   }
 
-  console.log(moment(beginDate).format("YYYY-MM-DD HH:mm:ss"));
-  console.log(moment(currentDatetime).format("YYYY-MM-DD HH:mm:ss"));
+  // console.log(moment(beginDate).format("YYYY-MM-DD HH:mm:ss"));
+  // console.log(moment(currentDatetime).format("YYYY-MM-DD HH:mm:ss"));
   //check if currentDatetime - beginDate > 1day
   if (!withoutdelay) {
     if (moment(currentDatetime).diff(moment(beginDate), "hours") < 12) return;
@@ -62,8 +62,12 @@ async function setOrders(withoutdelay: boolean = false) {
 
   // else beginDate = moment(beginDate).format("YYYY-MM-DD");
   while (!isCreating) {
+    beginDate = moment(beginDate).format("YYYY-MM-DD");
+    console.log("beginDate: ", beginDate);
+    console.log("endDate: ", endDate);
+
     operationQuery = await queryOrdersByDateRange(beginDate, endDate);
-    await waiter.WaitMilliseconds(300);
+    await waiter.WaitMilliseconds(100);
 
     if (
       operationQuery.bulkOperation != null &&
@@ -80,7 +84,7 @@ async function setOrders(withoutdelay: boolean = false) {
   let response;
   while (!isCompleted) {
     response = await getBulkOperationStatus(operationQuery.bulkOperation.id);
-    await waiter.WaitMilliseconds(300);
+    await waiter.WaitMilliseconds(100);
     if (response.status == "COMPLETED") isCompleted = true;
     else {
       console.log("Not yet Finished or Error");

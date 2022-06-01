@@ -75,7 +75,7 @@ export async function queryOrdersByDateRange(
     },
     config
   );
-  console.log(bulkOperation.data.data);
+  // console.log(bulkOperation.data.data);
   return bulkOperation.data.data.bulkOperationRunQuery;
 }
 
@@ -151,7 +151,7 @@ export async function queryAllProducts() {
     },
     config
   );
-  console.log(bulkOperation.data.data);
+  // console.log(bulkOperation.data.data);
   console.log(bulkOperation.data.data.bulkOperationRunQuery.userErrors);
 
   return bulkOperation.data.data.bulkOperationRunQuery;
