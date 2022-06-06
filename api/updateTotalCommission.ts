@@ -38,6 +38,15 @@ export default async (request: VercelRequest, response: VercelResponse) => {
           : currentMember.lastCommissionDatetime;
       let endDate = currentDatetime.add(-5, "minutes").valueOf();
 
+      let totalCommission =
+        currentMember.totalCommission == undefined
+          ? 0
+          : currentMember.totalCommission;
+      let recievedCommission =
+        currentMember.recievedCommission == undefined
+          ? 0
+          : currentMember.recievedCommission;
+
       if (moment(endDate).diff(startDate, "minutes") > 0) {
         let totalOrderSumByDateRanges = await getAllMyOrderSumByDateRange(
           startDate,
@@ -45,17 +54,7 @@ export default async (request: VercelRequest, response: VercelResponse) => {
           request.body.urlsuffix
         );
 
-        let totalCommission =
-          currentMember.totalCommission == undefined
-            ? 0
-            : currentMember.totalCommission;
-
         totalCommission += totalOrderSumByDateRanges;
-
-        let recievedCommission =
-          currentMember.recievedCommission == undefined
-            ? 0
-            : currentMember.recievedCommission;
 
         db.collection("members").doc(currentMember.docId).update({
           lastCommissionDatetime: endDate,
@@ -63,11 +62,16 @@ export default async (request: VercelRequest, response: VercelResponse) => {
           recievedCommission: recievedCommission,
         });
       }
+      response.status(200).send({
+        lastCommissionDatetime: endDate,
+        totalCommission: totalCommission,
+        recievedCommission: recievedCommission,
+      });
     }
   } catch (error) {
+    response.status(200).send({ status: "100" });
     console.log(error);
   }
-  response.status(200).send("Hello World!");
 };
 
 async function getAllMyOrderSumByDateRange(
