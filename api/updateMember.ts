@@ -28,6 +28,7 @@ export default async (request: VercelRequest, response: VercelResponse) => {
       "phonenumber",
       "verifiedStatus",
       "commissionPercentage",
+      "docId",
     ];
 
     if (_.without(Object.keys(request.body), ...allowColumns).length > 0) {
