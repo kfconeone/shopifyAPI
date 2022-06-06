@@ -15,24 +15,28 @@ admin.initializeApp({
 export default async (request: VercelRequest, response: VercelResponse) => {
   console.log(request.body);
 
-  let allowColumns: string[] = [
-    "isAgentProduct",
-    "instaId",
-    "isInGroup",
-    "kolname",
-    "lastLoginDatetime",
-    "lineid",
-    "nickname",
-    "password",
-    "phonenumber",
-    "verifiedStatus",
-    "commissionPercentage",
-  ];
+  if (request.method === "POST") {
+    let allowColumns: string[] = [
+      "isAgentProduct",
+      "instaId",
+      "isInGroup",
+      "kolname",
+      "lastLoginDatetime",
+      "lineid",
+      "nickname",
+      "password",
+      "phonenumber",
+      "verifiedStatus",
+      "commissionPercentage",
+    ];
 
-  if (_.without(Object.keys(request.body), ...allowColumns).length > 0) {
-    response.status(200).send({ status: "001", message: "存在不可修改的欄位" });
-  } else {
-    let db = admin.firestore();
-    response.status(200).send({ status: "000" });
+    if (_.without(Object.keys(request.body), ...allowColumns).length > 0) {
+      response
+        .status(200)
+        .send({ status: "001", message: "存在不可修改的欄位" });
+    } else {
+      let db = admin.firestore();
+      response.status(200).send({ status: "000" });
+    }
   }
 };
