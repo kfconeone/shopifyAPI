@@ -15,33 +15,37 @@ admin.initializeApp({
 export default async (request: VercelRequest, response: VercelResponse) => {
   console.log(request.body);
 
-  if (request.method === "POST") {
-    let allowColumns: string[] = [
-      "isAgentProduct",
-      "instaId",
-      "isInGroup",
-      "kolname",
-      "lastLoginDatetime",
-      "lineid",
-      "nickname",
-      "password",
-      "phonenumber",
-      "verifiedStatus",
-      "commissionPercentage",
-      "docId",
-    ];
+  try {
+    if (request.method === "POST") {
+      let allowColumns: string[] = [
+        "isAgentProduct",
+        "instaId",
+        "isInGroup",
+        "kolname",
+        "lastLoginDatetime",
+        "lineid",
+        "nickname",
+        "password",
+        "phonenumber",
+        "verifiedStatus",
+        "commissionPercentage",
+        "docId",
+      ];
 
-    if (_.without(Object.keys(request.body), ...allowColumns).length > 0) {
-      response
-        .status(200)
-        .send({ status: "001", message: "存在不可修改的欄位" });
-      return;
+      if (_.without(Object.keys(request.body), ...allowColumns).length > 0) {
+        response
+          .status(200)
+          .send({ status: "001", message: "存在不可修改的欄位" });
+        return;
+      } else {
+        let db = admin.firestore();
+        db.collection("members").doc(request.body.docId).update(request.body);
+        response.status(200).send({ status: "000" });
+      }
     } else {
-      let db = admin.firestore();
-      db.collection("members").doc(request.body.docId).update(request.body);
-      response.status(200).send({ status: "000" });
+      response.status(200).send("");
     }
-  } else {
-    response.status(200).send("");
+  } catch (error) {
+    console.log(error);
   }
 };
