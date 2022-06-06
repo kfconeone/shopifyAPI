@@ -39,7 +39,8 @@ export default async (request: VercelRequest, response: VercelResponse) => {
         return;
       } else {
         let db = admin.firestore();
-        db.collection("members")
+        await db
+          .collection("members")
           .doc(request.body.docId.replace("members/", ""))
           .update(request.body);
         response.status(200).send({ status: "000" });
