@@ -26,8 +26,8 @@ export default async (request: VercelRequest, response: VercelResponse) => {
         .get();
 
       q.forEach((doc: any) => {
-        currentMember["docId"] = doc.id;
         currentMember = doc.data();
+        currentMember["docId"] = doc.id;
       });
 
       let currentDatetime = moment();
