@@ -67,11 +67,14 @@ export default async (request: VercelRequest, response: VercelResponse) => {
         totalCommission: totalCommission,
         recievedCommission: recievedCommission,
       });
+      return;
     }
   } catch (error) {
     response.status(200).send({ status: "100" });
     console.log(error);
+    return;
   }
+  response.status(200).send("Hello World!");
 };
 
 async function getAllMyOrderSumByDateRange(
