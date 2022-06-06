@@ -38,5 +38,7 @@ export default async (request: VercelRequest, response: VercelResponse) => {
       let db = admin.firestore();
       response.status(200).send({ status: "000" });
     }
+  } else {
+    response.status(200).send("");
   }
 };
