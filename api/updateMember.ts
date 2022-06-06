@@ -34,8 +34,10 @@ export default async (request: VercelRequest, response: VercelResponse) => {
       response
         .status(200)
         .send({ status: "001", message: "存在不可修改的欄位" });
+      return;
     } else {
       let db = admin.firestore();
+      db.collection("members").doc(request.body.docId).update(request.body);
       response.status(200).send({ status: "000" });
     }
   } else {
