@@ -51,10 +51,16 @@ export default async (request: VercelRequest, response: VercelResponse) => {
             : currentMember.totalCommission;
 
         totalCommission += totalOrderSumByDateRanges;
-        console.log(currentMember.docId);
+
+        let recievedCommission =
+          currentMember.recievedCommission == undefined
+            ? 0
+            : currentMember.recievedCommission;
+
         db.collection("members").doc(currentMember.docId).update({
           lastCommissionDatetime: endDate,
           totalCommission: totalCommission,
+          recievedCommission: recievedCommission,
         });
       }
     }
