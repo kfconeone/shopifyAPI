@@ -47,6 +47,7 @@ export default async (request: VercelRequest, response: VercelResponse) => {
           ? 0
           : currentMember.recievedCommission;
 
+      console.log(1);
       if (moment(endDate).diff(startDate, "minutes") > 0) {
         let totalOrderSumByDateRanges = await getAllMyOrderSumByDateRange(
           startDate,
