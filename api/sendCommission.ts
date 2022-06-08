@@ -20,11 +20,12 @@ export default async (request: VercelRequest, response: VercelResponse) => {
     return;
   }
   let data = request.body;
-  try {
-    await sendCom(data.amount, data.receiver, data.sender);
-  } catch (error) {
-    console.log(error);
-  }
+  console.log("data:", data);
+  // try {
+  //   await sendCom(data.amount, data.receiver, data.sender);
+  // } catch (error) {
+  //   console.log(error);
+  // }
   console.log(request.body);
   response.status(200).send("Hello World!");
 };
