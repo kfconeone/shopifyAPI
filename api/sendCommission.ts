@@ -15,18 +15,17 @@ admin.initializeApp({
 
 export default async (request: VercelRequest, response: VercelResponse) => {
   // console.log(request);
-  if (request.method === "OPTION") {
+  if (request.method === "OPTIONS") {
     response.status(200).send("Hello World!");
     return;
   }
   let data = request.body;
   console.log("data:", data);
-  // try {
-  //   await sendCom(data.amount, data.receiver, data.sender);
-  // } catch (error) {
-  //   console.log(error);
-  // }
-  console.log(request.body);
+  try {
+    await sendCom(data.amount, data.receiver, data.sender);
+  } catch (error) {
+    console.log(error);
+  }
   response.status(200).send("Hello World!");
 };
 
@@ -53,7 +52,7 @@ async function sendCom(amount: any, receiver: any, sender: any) {
   }
   console.log("sender is :", senderRole);
 
-  let receiverQuery = await db.collection("members").where("account", "==", receiver).get();
+  let receiverQuery = await db.collection("members").where("urlsuffix", "==", receiver).get();
   if (receiverQuery.empty) {
     console.log("receiver not found");
     return;
