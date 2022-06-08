@@ -20,10 +20,7 @@ export default async (request: VercelRequest, response: VercelResponse) => {
     if (request.method == "POST") {
       let currentMember: any = {};
 
-      let q = await db
-        .collection("members")
-        .where("urlsuffix", "==", request.body.urlsuffix)
-        .get();
+      let q = await db.collection("members").where("urlsuffix", "==", request.body.urlsuffix).get();
 
       q.forEach((doc: any) => {
         currentMember = doc.data();
@@ -32,41 +29,28 @@ export default async (request: VercelRequest, response: VercelResponse) => {
 
       let currentDatetime = moment();
 
-      let startDate =
-        currentMember.lastCommissionDatetime == undefined
-          ? 0
-          : currentMember.lastCommissionDatetime;
+      let startDate = currentMember.lastCommissionDatetime == undefined ? 0 : currentMember.lastCommissionDatetime;
       let endDate = currentDatetime.add(-5, "minutes").valueOf();
 
-      let totalCommission =
-        currentMember.totalCommission == undefined
-          ? 0
-          : currentMember.totalCommission;
-      let recievedCommission =
-        currentMember.recievedCommission == undefined
-          ? 0
-          : currentMember.recievedCommission;
+      let totalCommission = currentMember.totalCommission == undefined ? 0 : currentMember.totalCommission;
+      let receivedCommission = currentMember.receivedCommission == undefined ? 0 : currentMember.receivedCommission;
 
       console.log(1);
       if (moment(endDate).diff(startDate, "minutes") > 0) {
-        let totalOrderSumByDateRanges = await getAllMyOrderSumByDateRange(
-          startDate,
-          endDate,
-          request.body.urlsuffix
-        );
+        let totalOrderSumByDateRanges = await getAllMyOrderSumByDateRange(startDate, endDate, request.body.urlsuffix);
 
         totalCommission += totalOrderSumByDateRanges;
 
         db.collection("members").doc(currentMember.docId).update({
           lastCommissionDatetime: endDate,
           totalCommission: totalCommission,
-          recievedCommission: recievedCommission,
+          receivedCommission: receivedCommission,
         });
       }
       response.status(200).send({
         lastCommissionDatetime: endDate,
         totalCommission: totalCommission,
-        recievedCommission: recievedCommission,
+        receivedCommission: receivedCommission,
       });
       return;
     }
@@ -78,17 +62,9 @@ export default async (request: VercelRequest, response: VercelResponse) => {
   response.status(200).send("Hello World!");
 };
 
-async function getAllMyOrderSumByDateRange(
-  startDate: number,
-  endDate: number,
-  urlsuffix: string
-) {
+async function getAllMyOrderSumByDateRange(startDate: number, endDate: number, urlsuffix: string) {
   let db = admin.firestore();
-  let q = await db
-    .collection("orders")
-    .where("createdAt", ">=", startDate)
-    .where("createdAt", "<=", endDate)
-    .get();
+  let q = await db.collection("orders").where("createdAt", ">=", startDate).where("createdAt", "<=", endDate).get();
 
   let orders: any[] = [];
   q.forEach((doc) => {
