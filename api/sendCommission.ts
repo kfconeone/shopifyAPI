@@ -19,32 +19,36 @@ export default async (request: VercelRequest, response: VercelResponse) => {
     response.status(200).send("Hello World!");
     return;
   }
+
   let data = request.body;
   console.log("data:", data);
   try {
-    await sendCom(data.amount, data.receiver, data.sender);
+    await sendCommission(data.amount, data.receiver, data.sender);
+    response.status(200).send({ status: "000", message: "派發成功" });
   } catch (error) {
     console.log(error);
+    response.status(200).send({ status: "001", message: "派發失敗" });
   }
-  response.status(200).send("Hello World!");
 };
 
-async function sendCom(amount: any, receiver: any, sender: any) {
-  const db = admin.firestore();
+async function sendCommission(amount: any, receiver: any, sender: any) {
   if (amount < 1) {
     console.log("amount is less than 1");
     return;
   }
 
+  const db = admin.firestore();
   let senderQuery = await db.collection("members").where("account", "==", sender).get();
   if (senderQuery.empty) {
     console.log("sender not found");
     return;
   }
+
   let senderRole = "";
   senderQuery.forEach((doc: any) => {
     senderRole = doc.data().role;
   });
+
   if (senderRole !== "sub" && senderRole !== "admin") {
     console.log("sender not sub or admin");
     console.log("sender is :", senderRole);
@@ -63,7 +67,7 @@ async function sendCom(amount: any, receiver: any, sender: any) {
   });
   console.log("receiverData:", receiverData);
 
-  receiverData.totalCommission - receiverData.receivedCommission - amount >= 0 ? console.log("ok") : console.log("not ok");
+  // receiverData.totalCommission - receiverData.receivedCommission - amount >= 0 ? console.log("ok") : console.log("not ok");
 
   if (receiverData.totalCommission - receiverData.receivedCommission - amount >= 0) {
     try {
