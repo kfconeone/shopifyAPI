@@ -13,7 +13,7 @@ admin.initializeApp({
 
 export default async (request: VercelRequest, response: VercelResponse) => {
   // console.log(request);
-  if (request.method === "Option") {
+  if (request.method === "OPTIONS") {
     response.status(200).send("Hello World!");
     return;
   }

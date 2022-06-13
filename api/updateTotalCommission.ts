@@ -18,7 +18,7 @@ const db = admin.firestore();
 export default async (request: VercelRequest, response: VercelResponse) => {
   try {
     // console.log(request);
-    if (request.method === "Option") {
+    if (request.method === "OPTIONS") {
       response.status(200).send("Hello World!");
       return;
     }

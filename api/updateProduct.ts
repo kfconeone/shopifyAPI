@@ -18,9 +18,7 @@ export default async (request: VercelRequest, response: VercelResponse) => {
   let results: any[] = [];
   product.variants.forEach((variant: any) => {
     let temp: any = {
-      vid: ("gid://shopify/ProductVariant/" + variant.id.toString())
-        .replace(/\//g, "")
-        .replace(":", ""),
+      vid: ("gid://shopify/ProductVariant/" + variant.id.toString()).replace(/\//g, "").replace(":", ""),
       sku: variant.sku,
       price: parseInt(variant.price),
       displayName: product.handle + " - " + variant.option1,
@@ -33,9 +31,7 @@ export default async (request: VercelRequest, response: VercelResponse) => {
     let promises: any[] = [];
     for (let i = 0; i < results.length; i++) {
       // console.log(result.vid.replace(/\//g, "").replace(":", ""));
-      promises.push(
-        db.collection("products").doc(results[i].vid).update(results[i])
-      );
+      promises.push(db.collection("products").doc(results[i].vid).update(results[i]));
     }
     promises.push(
       db.collection("systems").doc("products").set({
