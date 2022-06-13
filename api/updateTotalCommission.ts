@@ -45,7 +45,7 @@ export default async (request: VercelRequest, response: VercelResponse) => {
 
       totalCommission += totalOrderSumByDateRanges;
 
-      db.collection("members").doc(currentMember.docId).update({
+      await db.collection("members").doc(currentMember.docId).update({
         lastCommissionDatetime: endDate,
         totalCommission: totalCommission,
         receivedCommission: receivedCommission,
