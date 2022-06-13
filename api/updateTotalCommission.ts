@@ -14,52 +14,53 @@ admin.initializeApp({
 });
 
 const db = admin.firestore();
+
 export default async (request: VercelRequest, response: VercelResponse) => {
-  console.log(request.body);
   try {
-    if (request.method == "POST") {
-      let currentMember: any = {};
+    // console.log(request);
+    if (request.method === "Option") {
+      response.status(200).send("Hello World!");
+      return;
+    }
+    let currentMember: any = {};
 
-      let q = await db.collection("members").where("urlsuffix", "==", request.body.urlsuffix).get();
+    let q = await db.collection("members").where("urlsuffix", "==", request.body.urlsuffix).get();
 
-      q.forEach((doc: any) => {
-        currentMember = doc.data();
-        currentMember["docId"] = doc.id;
-      });
+    q.forEach((doc: any) => {
+      currentMember = doc.data();
+      currentMember["docId"] = doc.id;
+    });
 
-      let currentDatetime = moment();
+    let currentDatetime = moment();
 
-      let startDate = currentMember.lastCommissionDatetime == undefined ? 0 : currentMember.lastCommissionDatetime;
-      let endDate = currentDatetime.add(-5, "minutes").valueOf();
+    let startDate = currentMember.lastCommissionDatetime == undefined ? 0 : currentMember.lastCommissionDatetime;
+    let endDate = currentDatetime.add(-5, "minutes").valueOf();
 
-      let totalCommission = currentMember.totalCommission == undefined ? 0 : currentMember.totalCommission;
-      let receivedCommission = currentMember.receivedCommission == undefined ? 0 : currentMember.receivedCommission;
+    let totalCommission = currentMember.totalCommission == undefined ? 0 : currentMember.totalCommission;
+    let receivedCommission = currentMember.receivedCommission == undefined ? 0 : currentMember.receivedCommission;
 
-      console.log(1);
-      if (moment(endDate).diff(startDate, "minutes") > 0) {
-        let totalOrderSumByDateRanges = await getAllMyOrderSumByDateRange(startDate, endDate, request.body.urlsuffix);
+    console.log(1);
+    if (moment(endDate).diff(startDate, "minutes") > 0) {
+      let totalOrderSumByDateRanges = await getAllMyOrderSumByDateRange(startDate, endDate, request.body.urlsuffix);
 
-        totalCommission += totalOrderSumByDateRanges;
+      totalCommission += totalOrderSumByDateRanges;
 
-        db.collection("members").doc(currentMember.docId).update({
-          lastCommissionDatetime: endDate,
-          totalCommission: totalCommission,
-          receivedCommission: receivedCommission,
-        });
-      }
-      response.status(200).send({
+      db.collection("members").doc(currentMember.docId).update({
         lastCommissionDatetime: endDate,
         totalCommission: totalCommission,
         receivedCommission: receivedCommission,
       });
-      return;
     }
+    response.status(200).send({
+      lastCommissionDatetime: endDate,
+      totalCommission: totalCommission,
+      receivedCommission: receivedCommission,
+    });
   } catch (error) {
     response.status(200).send({ status: "100" });
     console.log(error);
     return;
   }
-  response.status(200).send("Hello World!");
 };
 
 async function getAllMyOrderSumByDateRange(startDate: number, endDate: number, urlsuffix: string) {
