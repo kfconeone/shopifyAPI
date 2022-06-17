@@ -1,5 +1,6 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import admin = require("firebase-admin");
+import { identity } from "lodash";
 
 const serviceAccount: admin.ServiceAccount = {
   projectId: process.env.project_id,
@@ -27,7 +28,7 @@ async function getAllDownlines(parentSuffix: string) {
   let downlines: any[] = [];
 
   q.forEach((doc) => {
-    if (doc.data().ancestors.includes(parentSuffix)) downlines.push(doc.data());
+    if (doc.data().ancestors.includes(parentSuffix)) downlines.push({ id: doc.id, ...doc.data() });
   });
 
   return downlines;
