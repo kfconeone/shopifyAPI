@@ -13,11 +13,22 @@ admin.initializeApp({
 
 export default async (request: VercelRequest, response: VercelResponse) => {
   // console.log(request);
-  if (request.method === "OPTIONS") {
-    response.status(200).send("Hello World!");
-    return;
+  if (request.method == "OPTIONS") {
+    response.status(200).send("OPTIONS");
+  } else {
+    console.log(request.body);
+    let result = await getAllMembers(request.body.parentSuffix);
+    response.status(200).send(result);
   }
-
-  console.log(request.body);
-  response.status(200).send("Hello World!");
 };
+
+async function getAllMembers(parentSuffix: string) {
+  const db = admin.firestore();
+  let allMembers: any = {};
+  let allMembersQuery = await db.collection("members").get();
+  allMembersQuery.forEach((doc: any) => {
+    allMembers[doc.data().urlsuffix] = doc.data();
+  });
+
+  return allMembers;
+}
